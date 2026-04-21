@@ -1,0 +1,24 @@
+type: object
+properties:
+  content:
+    type: array
+    items:
+      $ref: 'transaction-response.yaml'
+    description: List of transactions
+  pageable:
+    type: object
+    description: Pagination information
+    properties:
+      pageNumber:
+        type: integer
+        description: Current page number
+        example: 0
+      pageSize:
+        type: integer
+        description: Number of items per page
+        example: 20
+      totalElements:
+        type: integer
+        format: int64
+        description: Total number of elements
+        example: 150

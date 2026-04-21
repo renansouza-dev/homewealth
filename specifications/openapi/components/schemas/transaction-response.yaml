@@ -1,0 +1,48 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Transaction identifier
+    example: txn-456
+  brokerId:
+    type: string
+    format: uuid
+    description: Broker identifier
+    example: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e
+  portfolioId:
+    type: string
+    description: Portfolio identifier
+    format: uuid
+    example: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d
+  assetId:
+    type: string
+    description: Asset identifier
+    example: ITUB4
+  operationDate:
+    type: string
+    format: date
+    description: Date and time of the operation
+    example: "2026-01-01"
+  operationType:
+    $ref: 'operation-type.yaml'
+  quantity:
+    type: number
+    format: double
+    description: Quantity of assets
+    example: 100
+  unitPrice:
+    type: number
+    format: double
+    description: Price per unit
+    example: 27.35
+  fees:
+    type: number
+    format: double
+    description: Transaction fees
+    example: 10.00
+  netValue:
+    type: number
+    format: double
+    description: Net value after fees
+    example: -2745.00

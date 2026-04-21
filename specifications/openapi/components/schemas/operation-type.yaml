@@ -1,0 +1,5 @@
+type: string
+description: Type of transaction operation
+enum:
+  - BUY
+  - SELL

@@ -1,0 +1,17 @@
+services:
+  postgres:
+    container_name: 'postgres'
+    image: 'postgres:18.3-alpine'
+    environment:
+      - 'POSTGRES_DB=transactions'
+      - 'POSTGRES_PASSWORD=transactions'
+      - 'POSTGRES_USER=transactions'
+    ports:
+      - '5432'
+  grafana-lgtm:
+    container_name: 'grafana'
+    image: 'grafana/otel-lgtm:latest'
+    ports:
+      - '3000:3000'
+      - '4317'
+      - '4318'

@@ -1,0 +1,12 @@
+type: object
+properties:
+  details:
+    type: string
+    description: Detailed error information
+  timestamp:
+    type: string
+    format: date-time
+    description: Error timestamp
+required:
+  - details
+  - timestamp

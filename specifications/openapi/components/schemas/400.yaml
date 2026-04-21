@@ -1,0 +1,8 @@
+description: invalid request
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/error-response.yaml'
+    example:
+      details: "invalid input parameters"
+      timestamp: "2026-01-01T00:00:00.000000"

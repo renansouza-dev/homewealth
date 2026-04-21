@@ -1,0 +1,162 @@
+openapi: 3.0.3
+info:
+  title: HomeWealth Transaction Service API
+  description: microservice to manage investment transaction
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081/api/v1
+    description: development server
+
+paths:
+  /transactions:
+    post:
+      tags:
+        - Transactions
+      summary: Create a new transaction
+      operationId: createTransactions
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'components/schemas/transaction-request.yaml'
+      responses:
+        '201':
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                $ref: 'components/schemas/transaction-response.yaml'
+        400:
+          $ref: 'components/schemas/400.yaml'
+        401:
+          $ref: 'components/schemas/401.yaml'
+        403:
+          $ref: 'components/schemas/403.yaml'
+        405:
+          $ref: 'components/schemas/405.yaml'
+        500:
+          $ref: 'components/schemas/500.yaml'
+    get:
+      tags:
+        - Transactions
+      summary: List transactions from a given portfolioId
+      operationId: getTransactions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: portfolioId
+          in: query
+          schema:
+            type: string
+        - name: assetId
+          in: query
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: operationType
+          in: query
+          schema:
+            $ref: 'components/schemas/operation-type.yaml'
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: sortBy
+          in: query
+          description: Property to sort by
+          schema:
+            type: string
+            enum:
+              - id
+              - brokerId
+              - portfolioId
+              - assetId
+              - operationDate
+              - operationType
+              - quantity
+              - unitPrice
+              - grossValue
+              - fees
+              - netValue
+            default: operationDate
+        - name: sortOrder
+          in: query
+          description: Sort order direction
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        '200':
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                $ref: 'components/schemas/transaction-page-response.yaml'
+        400:
+          $ref: 'components/schemas/400.yaml'
+        401:
+          $ref: 'components/schemas/401.yaml'
+        403:
+          $ref: 'components/schemas/403.yaml'
+        405:
+          $ref: 'components/schemas/405.yaml'
+        500:
+          $ref: 'components/schemas/500.yaml'
+  /transactions/{transactionId}:
+    delete:
+      tags:
+        - Transactions
+      summary: Remove one transaction from the given id
+      operationId: deleteTransactions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Transaction deleted
+        400:
+          $ref: 'components/schemas/400.yaml'
+        401:
+          $ref: 'components/schemas/401.yaml'
+        403:
+          $ref: 'components/schemas/403.yaml'
+        404:
+          $ref: 'components/schemas/404.yaml'
+        405:
+          $ref: 'components/schemas/405.yaml'
+        500:
+          $ref: 'components/schemas/500.yaml'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

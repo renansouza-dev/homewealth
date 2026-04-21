@@ -1,0 +1,8 @@
+description: forbidden
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/error-response.yaml'
+    example:
+      details: "you don't have permission to delete this transaction"
+      timestamp: "2026-01-01T00:00:00.000000"
