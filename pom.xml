@@ -25,6 +25,11 @@
     <java.version>25</java.version>
     <assertj-core.version>3.27.7</assertj-core.version>
     <tools-jackson-core.jackson-core.version>3.1.1</tools-jackson-core.jackson-core.version>
+    <org-apache-tomcat-embed.tomcat-embed-core.version>11.0.21</org-apache-tomcat-embed.tomcat-embed-core.version>
+    <org-apache-tomcat.tomcat-coyote.version>11.0.21</org-apache-tomcat.tomcat-coyote.version>
+    <org-apache-tomcat.tomcat-catalina.version>11.0.21</org-apache-tomcat.tomcat-catalina.version>
+    <org-apache-tomcat.tomcat-util.version>11.0.21</org-apache-tomcat.tomcat-util.version>
+    <org-apache-tomcat-embed.tomcat-embed-websocket.version>11.0.21</org-apache-tomcat-embed.tomcat-embed-websocket.version>
   </properties>
 
   <dependencyManagement>
@@ -39,6 +44,31 @@
         <groupId>tools.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
         <version>${tools-jackson-core.jackson-core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${org-apache-tomcat-embed.tomcat-embed-core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-coyote</artifactId>
+        <version>${org-apache-tomcat.tomcat-coyote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-catalina</artifactId>
+        <version>${org-apache-tomcat.tomcat-catalina.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-util</artifactId>
+        <version>${org-apache-tomcat.tomcat-util.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-websocket</artifactId>
+        <version>${org-apache-tomcat-embed.tomcat-embed-websocket.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
