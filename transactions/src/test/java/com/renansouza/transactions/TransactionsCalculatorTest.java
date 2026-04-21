@@ -1,5 +1,7 @@
 package com.renansouza.transactions;
 
+import com.renansouza.transactions.domain.TransactionsCalculator;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.homewealth.transactions.model.OperationType;

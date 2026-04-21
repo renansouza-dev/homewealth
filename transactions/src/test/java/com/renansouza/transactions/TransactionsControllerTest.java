@@ -1,7 +1,9 @@
 package com.renansouza.transactions;
 
+import com.renansouza.transactions.api.TransactionsController;
 import com.renansouza.transactions.exception.TransactionNotFoundException;
 import com.renansouza.transactions.exception.TransactionsExceptionHandler;
+import com.renansouza.transactions.service.TransactionsService;
 
 import static com.homewealth.transactions.api.TransactionsApi.PATH_CREATE_TRANSACTIONS;
 import static com.homewealth.transactions.api.TransactionsApi.PATH_DELETE_TRANSACTIONS;

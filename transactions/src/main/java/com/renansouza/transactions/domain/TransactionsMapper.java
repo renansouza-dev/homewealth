@@ -1,4 +1,4 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.domain;
 
 import com.homewealth.transactions.model.TransactionPageResponse;
 import com.homewealth.transactions.model.TransactionPageResponsePageable;
@@ -57,7 +57,7 @@ import org.springframework.data.domain.Page;
 public abstract class TransactionsMapper {
 
   @Autowired
-  protected TransactionsCalculator calculator;
+  public TransactionsCalculator calculator;
 
   /**
    * Maps a transaction request received from the API layer into a {@link TransactionEntity}.

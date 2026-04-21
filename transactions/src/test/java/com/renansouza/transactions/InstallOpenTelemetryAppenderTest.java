@@ -1,5 +1,7 @@
 package com.renansouza.transactions;
 
+import com.renansouza.transactions.infra.InstallOpenTelemetryAppender;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 

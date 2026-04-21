@@ -1,6 +1,10 @@
 package com.renansouza.transactions;
 
+import com.renansouza.transactions.domain.TransactionEntity;
+import com.renansouza.transactions.domain.TransactionsMapper;
 import com.renansouza.transactions.exception.TransactionNotFoundException;
+import com.renansouza.transactions.repository.TransactionsRepository;
+import com.renansouza.transactions.service.TransactionsServiceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;

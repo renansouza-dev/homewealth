@@ -1,4 +1,6 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.repository;
+
+import com.renansouza.transactions.domain.TransactionEntity;
 
 import com.homewealth.transactions.model.OperationType;
 import jakarta.persistence.criteria.Predicate;

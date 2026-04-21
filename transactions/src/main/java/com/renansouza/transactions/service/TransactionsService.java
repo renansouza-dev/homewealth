@@ -1,19 +1,12 @@
-package com.renansouza.transactions;
-
-import com.renansouza.transactions.exception.TransactionNotFoundException;
+package com.renansouza.transactions.service;
 
 import com.homewealth.transactions.model.OperationType;
 import com.homewealth.transactions.model.TransactionPageResponse;
 import com.homewealth.transactions.model.TransactionRequest;
 import com.homewealth.transactions.model.TransactionResponse;
-import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
 
 /**
  * Service interface for managing financial transactions operations.
@@ -25,16 +18,7 @@ import org.springframework.stereotype.Service;
  * @author Renan Alberto de Souza
  * @since 1.0
  */
-@Service
-public class TransactionsServiceImpl implements TransactionsService {
-
-  private final TransactionsRepository repository;
-  private final TransactionsMapper mapper;
-
-  public TransactionsServiceImpl(TransactionsRepository repository, TransactionsMapper mapper) {
-    this.repository = repository;
-    this.mapper = mapper;
-  }
+public interface TransactionsService {
 
   /**
    * Creates a new transaction in the system.
@@ -46,19 +30,11 @@ public class TransactionsServiceImpl implements TransactionsService {
    * @param transactionRequest the request object containing all transaction details including
    *                           brokerId, portfolioId, assetId, operationDate, operationType,
    *                           quantity, unitPrice, and fees; must not be null
-   * @throws IllegalArgumentException if transactionRequest is null or contains invalid data
-   * @throws RuntimeException         if an unexpected error occurs during transaction creation
+   * @return a {@link TransactionResponse} containing the transaction data. This is not an
+   * idempotent operation.
    * @see TransactionRequest
    */
-  @Override
-  @Transactional
-  public TransactionResponse createTransactions(@NotNull TransactionRequest transactionRequest) {
-    TransactionEntity entity = mapper.mapToEntity(transactionRequest);
-
-    entity = repository.save(entity);
-
-    return mapper.mapToResponse(entity);
-  }
+  TransactionResponse createTransactions(TransactionRequest transactionRequest);
 
   /**
    * Deletes a transaction identified by the specified unique identifier.
@@ -70,15 +46,7 @@ public class TransactionsServiceImpl implements TransactionsService {
    * @throws IllegalArgumentException if id is null
    * @throws RuntimeException         if an error occurs during deletion
    */
-  @Override
-  public void deleteTransactions(@NotNull UUID transactionId) {
-    repository.findById(transactionId).orElseThrow(() -> {
-      String message = String.format("Transaction with id %s not found", transactionId);
-      return new TransactionNotFoundException(message);
-    });
-
-    repository.deleteById(transactionId);
-  }
+  void deleteTransactions(UUID transactionId);
 
   /**
    * Retrieves a paginated and filtered list of transactions for a specific portfolio.
@@ -103,15 +71,7 @@ public class TransactionsServiceImpl implements TransactionsService {
    * @see TransactionPageResponse
    * @see OperationType
    */
-  @Override
-  public TransactionPageResponse getTransactions(String portfolioId, String assetId,
-      LocalDate fromDate, LocalDate toDate, OperationType operationType, PageRequest pageRequest) {
-    Specification<TransactionEntity> spec = TransactionSpecification.withFilters(
-        portfolioId, assetId, fromDate, toDate, operationType
-    );
+  TransactionPageResponse getTransactions(String portfolioId, String assetId, LocalDate fromDate,
+      LocalDate toDate, OperationType operationType, PageRequest pageRequest);
 
-    Page<TransactionEntity> page = repository.findAll(spec, pageRequest);
-
-    return mapper.mapToPageResponse(page);
-  }
 }

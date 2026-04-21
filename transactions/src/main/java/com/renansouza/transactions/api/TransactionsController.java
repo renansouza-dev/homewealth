@@ -1,4 +1,6 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.api;
+
+import com.renansouza.transactions.service.TransactionsService;
 
 import com.homewealth.transactions.api.TransactionsApi;
 import com.homewealth.transactions.model.OperationType;

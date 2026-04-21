@@ -1,5 +1,9 @@
 package com.renansouza.transactions;
 
+import com.renansouza.transactions.domain.TransactionEntity;
+import com.renansouza.transactions.domain.TransactionsCalculator;
+import com.renansouza.transactions.domain.TransactionsMapper;
+
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
