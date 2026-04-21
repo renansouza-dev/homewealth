@@ -1,4 +1,4 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.infra;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender;
@@ -6,11 +6,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 @Component
-class InstallOpenTelemetryAppender implements InitializingBean {
+public class InstallOpenTelemetryAppender implements InitializingBean {
     
     private final OpenTelemetry openTelemetry;
     
-    InstallOpenTelemetryAppender(OpenTelemetry openTelemetry) {
+    public InstallOpenTelemetryAppender(OpenTelemetry openTelemetry) {
         this.openTelemetry = openTelemetry;
     }
     

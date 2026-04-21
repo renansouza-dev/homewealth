@@ -1,5 +1,8 @@
 package com.renansouza.transactions;
 
+import com.renansouza.transactions.domain.TransactionEntity;
+import com.renansouza.transactions.repository.TransactionSpecification;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

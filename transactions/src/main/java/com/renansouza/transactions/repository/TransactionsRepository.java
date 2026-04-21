@@ -1,4 +1,6 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.repository;
+
+import com.renansouza.transactions.domain.TransactionEntity;
 
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

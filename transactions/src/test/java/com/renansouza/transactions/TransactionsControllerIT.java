@@ -1,5 +1,8 @@
 package com.renansouza.transactions;
 
+import com.renansouza.transactions.domain.TransactionEntity;
+import com.renansouza.transactions.repository.TransactionsRepository;
+
 import static com.homewealth.transactions.api.TransactionsApi.PATH_CREATE_TRANSACTIONS;
 import static com.homewealth.transactions.api.TransactionsApi.PATH_DELETE_TRANSACTIONS;
 import static com.homewealth.transactions.api.TransactionsApi.PATH_GET_TRANSACTIONS;

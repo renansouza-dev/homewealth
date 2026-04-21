@@ -1,4 +1,4 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.domain;
 
 import com.homewealth.transactions.model.OperationType;
 import java.math.BigDecimal;

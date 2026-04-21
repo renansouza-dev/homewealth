@@ -1,12 +1,23 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.service;
+
+import com.renansouza.transactions.domain.TransactionEntity;
+import com.renansouza.transactions.domain.TransactionsMapper;
+import com.renansouza.transactions.exception.TransactionNotFoundException;
+import com.renansouza.transactions.repository.TransactionSpecification;
+import com.renansouza.transactions.repository.TransactionsRepository;
 
 import com.homewealth.transactions.model.OperationType;
 import com.homewealth.transactions.model.TransactionPageResponse;
 import com.homewealth.transactions.model.TransactionRequest;
 import com.homewealth.transactions.model.TransactionResponse;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 /**
  * Service interface for managing financial transactions operations.
@@ -18,7 +29,16 @@ import org.springframework.data.domain.PageRequest;
  * @author Renan Alberto de Souza
  * @since 1.0
  */
-public interface TransactionsService {
+@Service
+public class TransactionsServiceImpl implements TransactionsService {
+
+  private final TransactionsRepository repository;
+  private final TransactionsMapper mapper;
+
+  public TransactionsServiceImpl(TransactionsRepository repository, TransactionsMapper mapper) {
+    this.repository = repository;
+    this.mapper = mapper;
+  }
 
   /**
    * Creates a new transaction in the system.
@@ -30,11 +50,19 @@ public interface TransactionsService {
    * @param transactionRequest the request object containing all transaction details including
    *                           brokerId, portfolioId, assetId, operationDate, operationType,
    *                           quantity, unitPrice, and fees; must not be null
-   * @return a {@link TransactionResponse} containing the transaction data. This is not an
-   * idempotent operation.
+   * @throws IllegalArgumentException if transactionRequest is null or contains invalid data
+   * @throws RuntimeException         if an unexpected error occurs during transaction creation
    * @see TransactionRequest
    */
-  TransactionResponse createTransactions(TransactionRequest transactionRequest);
+  @Override
+  @Transactional
+  public TransactionResponse createTransactions(@NotNull TransactionRequest transactionRequest) {
+    TransactionEntity entity = mapper.mapToEntity(transactionRequest);
+
+    entity = repository.save(entity);
+
+    return mapper.mapToResponse(entity);
+  }
 
   /**
    * Deletes a transaction identified by the specified unique identifier.
@@ -46,7 +74,15 @@ public interface TransactionsService {
    * @throws IllegalArgumentException if id is null
    * @throws RuntimeException         if an error occurs during deletion
    */
-  void deleteTransactions(UUID transactionId);
+  @Override
+  public void deleteTransactions(@NotNull UUID transactionId) {
+    repository.findById(transactionId).orElseThrow(() -> {
+      String message = String.format("Transaction with id %s not found", transactionId);
+      return new TransactionNotFoundException(message);
+    });
+
+    repository.deleteById(transactionId);
+  }
 
   /**
    * Retrieves a paginated and filtered list of transactions for a specific portfolio.
@@ -71,7 +107,15 @@ public interface TransactionsService {
    * @see TransactionPageResponse
    * @see OperationType
    */
-  TransactionPageResponse getTransactions(String portfolioId, String assetId, LocalDate fromDate,
-      LocalDate toDate, OperationType operationType, PageRequest pageRequest);
+  @Override
+  public TransactionPageResponse getTransactions(String portfolioId, String assetId,
+      LocalDate fromDate, LocalDate toDate, OperationType operationType, PageRequest pageRequest) {
+    Specification<TransactionEntity> spec = TransactionSpecification.withFilters(
+        portfolioId, assetId, fromDate, toDate, operationType
+    );
 
+    Page<TransactionEntity> page = repository.findAll(spec, pageRequest);
+
+    return mapper.mapToPageResponse(page);
+  }
 }
