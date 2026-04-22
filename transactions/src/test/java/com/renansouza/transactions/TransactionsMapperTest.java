@@ -138,8 +138,7 @@ class TransactionsMapperTest {
             .isEqualTo(entity.getOperationDate()),
         () -> assertThat(response.getOperationType()).isNotNull()
             .isEqualTo(entity.getOperationType()),
-        () -> assertThat(response.getQuantity().intValue()).isNotNull()
-            .isEqualTo(entity.getQuantity())
+        () -> assertThat(response.getQuantity().intValue()).isEqualTo(entity.getQuantity())
     );
   }
 
