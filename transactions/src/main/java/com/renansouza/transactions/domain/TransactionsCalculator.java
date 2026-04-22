@@ -69,14 +69,8 @@ public class TransactionsCalculator {
    * @param operationType transaction operationType
    * @return netValue     transaction value
    */
-  public BigDecimal calculateNet(BigDecimal unitPrice, int quantity, BigDecimal fees,
-      OperationType operationType) {
+  public BigDecimal calculateNet(BigDecimal unitPrice, int quantity, BigDecimal fees, OperationType operationType) {
     BigDecimal gross = calculateGross(unitPrice, quantity);
-
-    if (operationType == OperationType.BUY) {
-      return gross.add(fees);
-    }
-
-    return gross.subtract(fees);
+    return operationType == OperationType.BUY ? gross.add(fees) : gross.subtract(fees);
   }
 }

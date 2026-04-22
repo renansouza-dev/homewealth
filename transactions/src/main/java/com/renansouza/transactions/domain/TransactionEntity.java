@@ -9,11 +9,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,8 +37,7 @@ public class TransactionEntity {
   @Column(name = "portfolio_id", nullable = false, updatable = false)
   private UUID portfolioId;
 
-  @Min(5)
-  @Max(6)
+  @Size(min = 5, max = 6)
   @Column(name = "asset_id", length = 20, nullable = false, updatable = false)
   private String assetId;
 
