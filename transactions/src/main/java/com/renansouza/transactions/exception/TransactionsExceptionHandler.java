@@ -67,7 +67,8 @@ public class TransactionsExceptionHandler {
   @ResponseStatus(value = HttpStatus.BAD_REQUEST)
   @ExceptionHandler({MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
   public ErrorResponse handleBadRequest(MethodArgumentTypeMismatchException ex) {
-    return new ErrorResponse(ex.getCause().getMessage(), OffsetDateTime.now());
+    String message = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
+    return new ErrorResponse(message, OffsetDateTime.now());
   }
 
   /**

@@ -20,11 +20,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 /**
- * Service interface for managing financial transactions operations.
+ * Service implementation for managing financial transactions operations.
  *
- * <p>This interface defines the core operations for creating, retrieving, and deleting
- * transactions within the system. Implementations of this interface should handle the business
- * logic and persistence operations related to transaction management.
+ * <p>This implementation is the core operations for creating, retrieving, and deleting
+ * transactions within the system.
  *
  * @author Renan Alberto de Souza
  * @since 1.0
@@ -76,11 +75,9 @@ public class TransactionsServiceImpl implements TransactionsService {
    */
   @Override
   public void deleteTransactions(@NotNull UUID transactionId) {
-    repository.findById(transactionId).orElseThrow(() -> {
-      String message = String.format("Transaction with id %s not found", transactionId);
-      return new TransactionNotFoundException(message);
-    });
-
+    if (!repository.existsById(transactionId)) {
+      throw new TransactionNotFoundException("Transaction with id " + transactionId + " not found");
+    }
     repository.deleteById(transactionId);
   }
 

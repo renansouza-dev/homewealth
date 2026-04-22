@@ -31,11 +31,11 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,6 +51,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 class TransactionsServiceImplTest {
 
@@ -389,72 +390,68 @@ class TransactionsServiceImplTest {
   class DeleteTransactionsTests {
 
     private UUID validTransactionId;
-    private TransactionEntity existingTransaction;
 
     @BeforeEach
     void setUp() {
       validTransactionId = UUID.randomUUID();
-      existingTransaction = new TransactionEntity();
-      existingTransaction.setId(validTransactionId);
     }
 
     @Test
     @DisplayName("Should successfully delete an existing transaction")
     void shouldDeleteExistingTransaction() {
-      when(repository.findById(validTransactionId)).thenReturn(Optional.of(existingTransaction));
+      when(repository.existsById(validTransactionId)).thenReturn(true);
       doNothing().when(repository).deleteById(validTransactionId);
 
       assertDoesNotThrow(() -> service.deleteTransactions(validTransactionId));
 
-      verify(repository, times(1)).findById(validTransactionId);
+      verify(repository, times(1)).existsById(validTransactionId);
       verify(repository, times(1)).deleteById(validTransactionId);
     }
 
     @Test
     @DisplayName("Should throw TransactionNotFoundException when transaction does not exist")
     void shouldThrowExceptionWhenTransactionNotFound() {
-      when(repository.findById(validTransactionId)).thenReturn(Optional.empty());
+      when(repository.existsById(validTransactionId)).thenReturn(false);
 
       TransactionNotFoundException exception = assertThrows(TransactionNotFoundException.class,
           () -> service.deleteTransactions(validTransactionId));
 
-      assertEquals(String.format("Transaction with id %s not found", validTransactionId),
-          exception.getMessage());
-      verify(repository, times(1)).findById(validTransactionId);
+      assertEquals(String.format("Transaction with id %s not found", validTransactionId), exception.getMessage());
+      verify(repository, times(1)).existsById(validTransactionId);
       verify(repository, never()).deleteById(any());
     }
 
     @Test
-    @DisplayName("Should verify findById is called before deleteById")
+    @DisplayName("Should verify existsById is called before deleteById")
     void shouldVerifyFindByIdIsCalledBeforeDeleteById() {
-      when(repository.findById(validTransactionId)).thenReturn(Optional.of(existingTransaction));
+      when(repository.existsById(validTransactionId)).thenReturn(true);
       doNothing().when(repository).deleteById(validTransactionId);
 
       service.deleteTransactions(validTransactionId);
 
       InOrder inOrder = inOrder(repository);
-      inOrder.verify(repository).findById(validTransactionId);
+      inOrder.verify(repository).existsById(validTransactionId);
       inOrder.verify(repository).deleteById(validTransactionId);
     }
 
     @Test
-    @DisplayName("Should throw RuntimeException when repository throws exception during findById")
-    void shouldThrowRuntimeExceptionWhenFindByIdFails() {
-      when(repository.findById(validTransactionId)).thenThrow(
+    @DisplayName("Should throw RuntimeException when repository throws exception during existsById")
+    void shouldThrowRuntimeExceptionWhenexistsByIdIdFails() {
+      when(repository.existsById(validTransactionId)).thenThrow(
           new RuntimeException("Database connection error"));
 
       RuntimeException exception = assertThrows(RuntimeException.class,
           () -> service.deleteTransactions(validTransactionId));
 
       assertEquals("Database connection error", exception.getMessage());
-      verify(repository, times(1)).findById(validTransactionId);
+      verify(repository, times(1)).existsById(validTransactionId);
       verify(repository, never()).deleteById(any());
     }
 
     @Test
     @DisplayName("Should throw RuntimeException when repository throws exception during deleteById")
     void shouldThrowRuntimeExceptionWhenDeleteByIdFails() {
-      when(repository.findById(validTransactionId)).thenReturn(Optional.of(existingTransaction));
+      when(repository.existsById(validTransactionId)).thenReturn(true);
       doThrow(new RuntimeException("Database deletion error")).when(repository)
           .deleteById(validTransactionId);
 
@@ -462,7 +459,7 @@ class TransactionsServiceImplTest {
           () -> service.deleteTransactions(validTransactionId));
 
       assertEquals("Database deletion error", exception.getMessage());
-      verify(repository, times(1)).findById(validTransactionId);
+      verify(repository, times(1)).existsById(validTransactionId);
       verify(repository, times(1)).deleteById(validTransactionId);
     }
 
@@ -473,32 +470,32 @@ class TransactionsServiceImplTest {
       TransactionEntity entity = new TransactionEntity();
       entity.setId(allZerosId);
 
-      when(repository.findById(allZerosId)).thenReturn(Optional.of(entity));
+      when(repository.existsById(allZerosId)).thenReturn(true);
       doNothing().when(repository).deleteById(allZerosId);
 
       assertDoesNotThrow(() -> service.deleteTransactions(allZerosId));
 
-      verify(repository, times(1)).findById(allZerosId);
+      verify(repository, times(1)).existsById(allZerosId);
       verify(repository, times(1)).deleteById(allZerosId);
     }
 
     @Test
     @DisplayName("Should not call deleteById when transaction is not found")
     void shouldNotCallDeleteByIdWhenTransactionNotFound() {
-      when(repository.findById(validTransactionId)).thenReturn(Optional.empty());
+      when(repository.existsById(validTransactionId)).thenReturn(false);
 
       assertThrows(TransactionNotFoundException.class,
           () -> service.deleteTransactions(validTransactionId));
 
-      verify(repository, times(1)).findById(validTransactionId);
+      verify(repository, times(1)).existsById(validTransactionId);
       verify(repository, never()).deleteById(validTransactionId);
     }
 
     @Test
     @DisplayName("Should throw TransactionNotFoundException with correct message format")
     void shouldThrowExceptionWithCorrectMessageFormat() {
-      UUID specificId = existingTransaction.getId();
-      when(repository.findById(specificId)).thenReturn(Optional.empty());
+      UUID specificId = validTransactionId;
+      when(repository.existsById(specificId)).thenReturn(false);
 
       TransactionNotFoundException exception = assertThrows(TransactionNotFoundException.class,
           () -> service.deleteTransactions(specificId));
@@ -510,12 +507,12 @@ class TransactionsServiceImplTest {
     @Test
     @DisplayName("Should complete deletion operation successfully without returning value")
     void shouldCompleteOperationWithoutReturningValue() {
-      when(repository.findById(validTransactionId)).thenReturn(Optional.of(existingTransaction));
+      when(repository.existsById(validTransactionId)).thenReturn(true);
       doNothing().when(repository).deleteById(validTransactionId);
 
       service.deleteTransactions(validTransactionId);
 
-      verify(repository).findById(validTransactionId);
+      verify(repository).existsById(validTransactionId);
       verify(repository).deleteById(validTransactionId);
       verifyNoMoreInteractions(repository);
     }
