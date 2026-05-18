@@ -27,7 +27,7 @@
     <tools-jackson-core.jackson-core.version>3.1.1</tools-jackson-core.jackson-core.version>
     <org-apache-tomcat-embed.tomcat-embed-core.version>11.0.21</org-apache-tomcat-embed.tomcat-embed-core.version>
     <org-apache-tomcat.tomcat-coyote.version>11.0.21</org-apache-tomcat.tomcat-coyote.version>
-    <org-apache-tomcat.tomcat-catalina.version>11.0.21</org-apache-tomcat.tomcat-catalina.version>
+    <org-apache-tomcat.tomcat-catalina.version>11.0.22</org-apache-tomcat.tomcat-catalina.version>
     <org-apache-tomcat.tomcat-util.version>11.0.21</org-apache-tomcat.tomcat-util.version>
     <org-apache-tomcat-embed.tomcat-embed-websocket.version>11.0.21</org-apache-tomcat-embed.tomcat-embed-websocket.version>
   </properties>
