@@ -6,6 +6,25 @@ import java.math.RoundingMode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * Spring component responsible for performing financial calculations on transactions.
+ *
+ * <p>Provides methods to compute the gross value, fee, and net value of a transaction,
+ * taking into account the operation type (BUY or SELL) and a configurable fee rate.
+ *
+ * <p>The fee rate is injected from the application property {@code transactions.fee-rate},
+ * defaulting to {@code 0.000275} (0.0275%) if the property is not set.
+ *
+ * <p>Calculation summary:
+ * <ul>
+ *   <li><b>Gross</b> — {@code unitPrice * quantity}</li>
+ *   <li><b>Fee</b> — {@code gross * feeRate}, rounded to 2 decimal places (HALF_UP)</li>
+ *   <li><b>Net (BUY)</b> — {@code gross + fee}</li>
+ *   <li><b>Net (SELL)</b> — {@code gross - fee}</li>
+ * </ul>
+ *
+ * @see OperationType
+ */
 @Component
 public class TransactionsCalculator {
 
