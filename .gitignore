@@ -1,3 +1,6 @@
+act
+.env
+.secrets
 HELP.md
 **/mvn*
 target/
@@ -36,3 +39,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/bin/
