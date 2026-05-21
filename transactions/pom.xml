@@ -16,13 +16,15 @@
   <packaging>jar</packaging>
 
   <properties>
+    <rest-assured.version>6.0.0</rest-assured.version>
     <org.mapstruct.version>1.6.3</org.mapstruct.version>
     <validation-api.version>3.1.1</validation-api.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
     <swagger-annotations.version>2.2.42</swagger-annotations.version>
     <maven-resources-plugin.version>3.4.0</maven-resources-plugin.version>
     <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
     <openapi-generator-maven-plugin.version>7.18.0</openapi-generator-maven-plugin.version>
-    <opentelemetry-logback-appender-1.0.version>2.24.0-alpha</opentelemetry-logback-appender-1.0.version>
+    <opentelemetry-instrumentation.version>2.27.0-alpha</opentelemetry-instrumentation.version>
   </properties>
 
   <dependencies>
@@ -49,7 +51,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-docker-compose</artifactId>
-      <scope>runtime</scope>
+      <scope>provided</scope>
       <optional>true</optional>
     </dependency>
 
@@ -76,7 +78,7 @@
     <dependency>
       <groupId>io.opentelemetry.instrumentation</groupId>
       <artifactId>opentelemetry-logback-appender-1.0</artifactId>
-      <version>${opentelemetry-logback-appender-1.0.version}</version>
+      <version>${opentelemetry-instrumentation.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mapstruct</groupId>
@@ -88,13 +90,13 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
-      <version>1.21.4</version>
+      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
-      <version>6.0.0</version>
+      <version>${rest-assured.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -122,6 +124,21 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <layers>
+            <enabled>true</enabled>
+          </layers>
+          <excludes>
+            <exclude>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-docker-compose</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -133,10 +150,6 @@
             </path>
           </annotationProcessorPaths>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -183,7 +196,6 @@
               <modelPackage>com.homewealth.transactions.model</modelPackage>
               <configOptions>
                 <dateLibrary>java8</dateLibrary>
-                <delegatePattern>true</delegatePattern>
                 <interfaceOnly>true</interfaceOnly>
                 <useSpringBoot3>true</useSpringBoot3>
                 <delegatePattern>false</delegatePattern>

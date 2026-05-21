@@ -14,6 +14,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +33,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransactionsServiceImpl implements TransactionsService {
 
+  private static final Logger log = LoggerFactory.getLogger(TransactionsServiceImpl.class);
   private final TransactionsRepository repository;
   private final TransactionsMapper mapper;
 
@@ -57,8 +60,14 @@ public class TransactionsServiceImpl implements TransactionsService {
   @Transactional
   public TransactionResponse createTransactions(@NotNull TransactionRequest transactionRequest) {
     TransactionEntity entity = mapper.mapToEntity(transactionRequest);
-
     entity = repository.save(entity);
+
+    log.atInfo()
+        .addKeyValue("transaction.id", entity.getId())
+        .addKeyValue("transaction.portfolioId", entity.getPortfolioId())
+        .addKeyValue("transaction.operationType", entity.getOperationType())
+        .setMessage("Transaction created.")
+        .log();
 
     return mapper.mapToResponse(entity);
   }
@@ -76,9 +85,18 @@ public class TransactionsServiceImpl implements TransactionsService {
   @Override
   public void deleteTransactions(@NotNull UUID transactionId) {
     if (!repository.existsById(transactionId)) {
+      log.atWarn()
+          .setMessage("Delete requested but transactionId {} not found")
+          .addArgument(transactionId)
+          .log();
       throw new TransactionNotFoundException("Transaction with id " + transactionId + " not found");
     }
+
     repository.deleteById(transactionId);
+    log.atInfo()
+        .setMessage("Transaction deleted successfully with transactionId {}")
+        .addArgument(transactionId)
+        .log();
   }
 
   /**
@@ -112,6 +130,16 @@ public class TransactionsServiceImpl implements TransactionsService {
     );
 
     Page<TransactionEntity> page = repository.findAll(spec, pageRequest);
+
+    log.atInfo()
+        .setMessage("{} transactions fetched")
+        .addArgument(page.getNumberOfElements())
+        .addKeyValue("page", page.getNumber())
+        .addKeyValue("size", page.getSize())
+        .addKeyValue("totalElements", page.getTotalElements())
+        .addKeyValue("totalPages", page.getTotalPages())
+        .addKeyValue("returnedElements", page.getNumberOfElements())
+        .log();
 
     return mapper.mapToPageResponse(page);
   }
