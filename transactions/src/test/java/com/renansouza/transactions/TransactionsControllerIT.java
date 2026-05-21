@@ -377,7 +377,7 @@ class TransactionsControllerIT {
           .body("assetId", equalTo(transactionRequest.getAssetId()))
           .body("operationDate", equalTo(transactionRequest.getOperationDate().toString()))
           .body("operationType", equalTo(transactionRequest.getOperationType().toString()))
-          .body("quantity", equalTo(transactionRequest.getQuantity().intValue()))
+          .body("quantity", equalTo(transactionRequest.getQuantity()))
           .body("unitPrice", equalTo(transactionRequest.getUnitPrice().intValue()))
           .body("fees", equalTo(fees))
           .body("netValue", equalTo(netValue));
