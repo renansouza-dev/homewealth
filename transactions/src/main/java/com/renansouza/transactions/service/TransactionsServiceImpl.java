@@ -19,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -59,7 +58,7 @@ public class TransactionsServiceImpl implements TransactionsService {
    * @see TransactionRequest
    */
   @Override
-  @Transactional(isolation = Isolation.SERIALIZABLE)
+  @Transactional
   public TransactionResponse createTransactions(@NotNull TransactionRequest transactionRequest) {
     TransactionEntity entity = mapper.mapToEntity(transactionRequest);
     entity = repository.save(entity);
@@ -85,6 +84,7 @@ public class TransactionsServiceImpl implements TransactionsService {
    * @throws RuntimeException         if an error occurs during deletion
    */
   @Override
+  @Transactional
   public void deleteTransactions(@NotNull UUID transactionId) {
     if (!repository.existsById(transactionId)) {
       log.atWarn()
@@ -145,4 +145,5 @@ public class TransactionsServiceImpl implements TransactionsService {
 
     return mapper.mapToPageResponse(page);
   }
+
 }
