@@ -10,7 +10,6 @@ import com.homewealth.transactions.model.OperationType;
 import com.homewealth.transactions.model.TransactionPageResponse;
 import com.homewealth.transactions.model.TransactionRequest;
 import com.homewealth.transactions.model.TransactionResponse;
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -20,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service implementation for managing financial transactions operations.
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
+@Transactional(readOnly = true)
 public class TransactionsServiceImpl implements TransactionsService {
 
   private static final Logger log = LoggerFactory.getLogger(TransactionsServiceImpl.class);
@@ -57,7 +59,7 @@ public class TransactionsServiceImpl implements TransactionsService {
    * @see TransactionRequest
    */
   @Override
-  @Transactional
+  @Transactional(isolation = Isolation.SERIALIZABLE)
   public TransactionResponse createTransactions(@NotNull TransactionRequest transactionRequest) {
     TransactionEntity entity = mapper.mapToEntity(transactionRequest);
     entity = repository.save(entity);
