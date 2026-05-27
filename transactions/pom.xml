@@ -16,6 +16,7 @@
   <packaging>jar</packaging>
 
   <properties>
+    <postgresql.version>42.7.11</postgresql.version>
     <rest-assured.version>6.0.0</rest-assured.version>
     <org.mapstruct.version>1.6.3</org.mapstruct.version>
     <validation-api.version>3.1.1</validation-api.version>
@@ -24,7 +25,7 @@
     <maven-resources-plugin.version>3.4.0</maven-resources-plugin.version>
     <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
     <openapi-generator-maven-plugin.version>7.18.0</openapi-generator-maven-plugin.version>
-    <opentelemetry-instrumentation.version>2.27.0-alpha</opentelemetry-instrumentation.version>
+    <opentelemetry-instrumentation.version>2.28.1-alpha</opentelemetry-instrumentation.version>
   </properties>
 
   <dependencies>
@@ -58,6 +59,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
