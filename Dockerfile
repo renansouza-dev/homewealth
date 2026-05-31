@@ -22,24 +22,17 @@ RUN tar -xzf /opt/jdk/jdk.tar.gz -C /opt/jdk/ && \
 # -----------------------------------------------------
 # STAGE 2 — BUILD: Compile the JAR
 # -----------------------------------------------------
-#FROM bellsoft/liberica-openjdk-alpine:25 AS builder
 FROM maven:3-eclipse-temurin-25-alpine AS builder
 
 WORKDIR /app
 
-# POMs — cache dependency downloads separately from source
 COPY pom.xml                  .
 COPY specifications/pom.xml   specifications/pom.xml
 COPY transactions/pom.xml     transactions/pom.xml
 
-# Maven wrapper
-#COPY transactions/mvnw        transactions/mvnw
-#COPY transactions/.mvn        transactions/.mvn
-
 RUN --mount=type=cache,target=/root/.m2 \
     mvn dependency:go-offline -pl transactions -am -q
 
-# Source — cache only invalidates here when code actually changes
 COPY specifications/openapi   specifications/openapi
 COPY transactions/src         transactions/src
 
