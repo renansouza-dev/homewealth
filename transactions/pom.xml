@@ -25,10 +25,18 @@
     <maven-resources-plugin.version>3.4.0</maven-resources-plugin.version>
     <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
     <openapi-generator-maven-plugin.version>7.18.0</openapi-generator-maven-plugin.version>
-    <opentelemetry-instrumentation.version>2.28.1-alpha</opentelemetry-instrumentation.version>
+    <opentelemetry-instrumentation.version>2.21.0-alpha</opentelemetry-instrumentation.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-opentelemetry</artifactId>
