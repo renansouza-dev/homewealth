@@ -1,0 +1,8 @@
+# Namespace for business services (transactions, payments, etc.).
+# Add new services here without modifying the `shared` namespace.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: services
+  labels:
+    app.kubernetes.io/managed-by: homewealth

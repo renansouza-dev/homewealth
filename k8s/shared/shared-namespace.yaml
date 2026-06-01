@@ -1,0 +1,9 @@
+# Namespace for shared infrastructure (databases, observability, messaging).
+# Services in the `services` namespace reference resources here via:
+#   <service>.shared.svc.cluster.local
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shared
+  labels:
+    app.kubernetes.io/managed-by: homewealth
