@@ -127,7 +127,7 @@ kubectl apply -f k8s/shared/postgres.yaml
 kubectl apply -f k8s/shared/grafana.yaml
 
 # Wait for both to be ready before proceeding
-kubectl rollout status deployment/postgres -n shared
+kubectl rollout status statefulset/postgres -n shared
 kubectl rollout status deployment/grafana  -n shared
 ```
 
@@ -207,8 +207,8 @@ Secrets are intentionally excluded from this repository. For local development, 
 
 Grafana LGTM (`grafana/otel-lgtm`) bundles **Loki**, **Grafana**, **Tempo**, and **Mimir** in a single container, providing logs, traces, and metrics out of the box via OpenTelemetry.
 
-| Signal  | Endpoint                                      | Spring Boot property                                         |
-|---------|-----------------------------------------------|--------------------------------------------------------------|
+| Signal  | Endpoint                                           | Spring Boot property                                    |
+|---------|----------------------------------------------------|---------------------------------------------------------|
 | Metrics | `grafana.shared.svc.cluster.local:4318/v1/metrics` | `management.otlp.metrics.export.url`                    |
 | Traces  | `grafana.shared.svc.cluster.local:4318/v1/traces`  | `management.opentelemetry.tracing.export.otlp.endpoint` |
-| Logs    | `grafana.shared.svc.cluster.local:4318/v1/logs`    | `management.opentelemetry.logging.export.otlp.endpoin`  |
+| Logs    | `grafana.shared.svc.cluster.local:4318/v1/logs`    | `management.opentelemetry.logging.export.otlp.endpoint` |
