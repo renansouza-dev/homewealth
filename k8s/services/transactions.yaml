@@ -24,6 +24,16 @@ spec:
         - name: transactions
           image: homewealth/transactions:1.0.0
           imagePullPolicy: Never
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ "ALL" ]
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            runAsUser: 100
+            runAsGroup: 101
           ports:
             - containerPort: 8081
           resources:
@@ -37,6 +47,16 @@ spec:
           env:
             - name: DB_URL
               value: "jdbc:postgresql://postgres.shared.svc.cluster.local:5432/transactions"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
             - name: MANAGEMENT_OTLP_METRICS_EXPORT_URL
               value: "http://grafana.shared.svc.cluster.local:4318/v1/metrics"
             - name: MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT
@@ -47,7 +67,14 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8081
-            initialDelaySeconds: 20
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 30
             periodSeconds: 10
             failureThreshold: 5
 ---

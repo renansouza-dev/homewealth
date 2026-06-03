@@ -34,6 +34,19 @@ spec:
       containers:
         - name: grafana
           image: grafana/otel-lgtm:0.25.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 472
+            runAsGroup: 472
+            runAsNonRoot: true
+            supplementalGroups:
+              - 0
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ "ALL" ]
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 3000  # Grafana UI
             - containerPort: 4318  # OTLP HTTP (traces, metrics, logs)
@@ -49,16 +62,32 @@ spec:
           volumeMounts:
             - name: grafana-data
               mountPath: /data
+            - name: tmp-dir
+              mountPath: /tmp
+            - name: lgtm-dir
+              mountPath: /etc/lgtm
           readinessProbe:
             httpGet:
               path: /api/health
               port: 3000
             initialDelaySeconds: 10
-            periodSeconds: 5
+            periodSeconds: 30
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 5
       volumes:
         - name: grafana-data
           persistentVolumeClaim:
             claimName: grafana-pvc
+        - name: tmp-dir
+          emptyDir: { }
+        - name: lgtm-dir
+          emptyDir: { }
 ---
 apiVersion: v1
 kind: Service

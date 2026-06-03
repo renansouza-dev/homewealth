@@ -16,7 +16,7 @@ Local development environment for the Homewealth platform, running on [Minikube]
 │  Namespace: services                                                │
 │                                                                     │
 │  ┌──────────────────┐      ┌──────────────────┐                     │
-│  │  transactions    │      │  assests  (soon) │   ← business        │
+│  │  transactions    │      │  assets (soon)   │   ← business        │
 │  │  :8081           │      │  :8082           │     services        │
 │  └────────┬─────────┘      └──────────────────┘                     │
 │           │  cross-namespace DNS                                    │
@@ -29,8 +29,7 @@ Local development environment for the Homewealth platform, running on [Minikube]
 │  │   postgres      │   │    grafana      │   ← shared               │
 │  │   :5432         │   │   LGTM stack    │     infrastructure       │
 │  │   PVC: 2Gi      │   │   :3000 (UI)    │                          │
-│  └─────────────────┘   │   :4317 (gRPC)  │                          │
-│                        │   :4318 (HTTP)  │                          │
+│  └─────────────────┘   │   :4318 (HTTP)  │                          │
 │                        │   PVC: 1Gi      │                          │
 │                        └─────────────────┘                          │
 └─────────────────────────────────────────────────────────────────────┘
@@ -44,10 +43,10 @@ Services communicate across namespaces using Kubernetes internal DNS:
 <service>.<namespace>.svc.cluster.local:<port>
 ```
 
-| Consumer         | Dependency   | Address                                         |
-|------------------|--------------|-------------------------------------------------|
-| `transactions`   | Postgres     | `postgres.shared.svc.cluster.local:5432`        |
-| `transactions`   | Grafana OTLP | `grafana.shared.svc.cluster.local:4318`         |
+| Consumer         | Dependency   | Address                                  |
+|------------------|--------------|------------------------------------------|
+| `transactions`   | Postgres     | `postgres.shared.svc.cluster.local:5432` |
+| `transactions`   | Grafana OTLP | `grafana.shared.svc.cluster.local:4318`  |
 
 ---
 
@@ -73,8 +72,8 @@ k8s/
 
 ## Prerequisites
 
-| Tool        | Purpose                    | Install |
-|-------------|----------------------------|---------|
+| Tool        | Purpose                    | Install     |
+|-------------|----------------------------|-------------|
 | `minikube`  | Local Kubernetes cluster   | [docs](https://minikube.sigs.k8s.io/docs/start/) |
 | `kubectl`   | Cluster CLI                | [docs](https://kubernetes.io/docs/tasks/tools/) |
 | `docker`    | Container runtime          | [docs](https://docs.docker.com/get-docker/) |
@@ -112,6 +111,11 @@ Secrets are created imperatively and are never committed to version control.
 ```bash
 kubectl create secret generic postgres-secret \
   --namespace=shared \
+  --from-literal=username=<username> \
+  --from-literal=password=<password>
+  
+kubectl create secret generic postgres-secret \
+  --namespace=services \
   --from-literal=username=<username> \
   --from-literal=password=<password>
 ```
@@ -203,8 +207,8 @@ Secrets are intentionally excluded from this repository. For local development, 
 
 Grafana LGTM (`grafana/otel-lgtm`) bundles **Loki**, **Grafana**, **Tempo**, and **Mimir** in a single container, providing logs, traces, and metrics out of the box via OpenTelemetry.
 
-| Signal  | Endpoint                                      | Spring Boot property |
-|---------|-----------------------------------------------|----------------------|
-| Metrics | `grafana.shared.svc.cluster.local:4318/v1/metrics` | `management.otlp.metrics.export.url` |
+| Signal  | Endpoint                                      | Spring Boot property                                         |
+|---------|-----------------------------------------------|--------------------------------------------------------------|
+| Metrics | `grafana.shared.svc.cluster.local:4318/v1/metrics` | `management.otlp.metrics.export.url`                    |
 | Traces  | `grafana.shared.svc.cluster.local:4318/v1/traces`  | `management.opentelemetry.tracing.export.otlp.endpoint` |
-| Logs    | `grafana.shared.svc.cluster.local:4318/v1/logs`    | `management.otlp.logging.endpoint` |
+| Logs    | `grafana.shared.svc.cluster.local:4318/v1/logs`    | `management.opentelemetry.logging.export.otlp.endpoin`  |
