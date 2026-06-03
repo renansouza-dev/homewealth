@@ -17,8 +17,16 @@ spec:
     requests:
       storage: 2Gi
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: shared
+data:
+  POSTGRES_DB: transactions
+---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
   namespace: shared
@@ -38,11 +46,24 @@ spec:
       containers:
         - name: postgres
           image: postgres:18.3-alpine
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ "ALL" ]
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            runAsUser: 70
+            runAsGroup: 70
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: "transactions"
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
@@ -60,17 +81,28 @@ spec:
               ephemeral-storage: "512Mi"
             limits:
               memory: "1Gi"
-              cpu: "1000m"
+              cpu: "1"
               ephemeral-storage: "1Gi"
           volumeMounts:
             - name: postgres-data
-              mountPath: /var/lib/postgresql/data
-              subPath: postgres  # avoids permission issues with the official postgres image
+              mountPath: /var/lib/postgresql
+              subPath: postgres
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", "transactions"]
-            initialDelaySeconds: 5
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 10
             periodSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 30
+            periodSeconds: 10
       volumes:
         - name: postgres-data
           persistentVolumeClaim:
