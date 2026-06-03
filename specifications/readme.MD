@@ -8,11 +8,11 @@ This module holds all OpenAPI specifications for the **HomeWealth** platform. It
 
 Manages investment transactions for a given portfolio. Base URL: `http://localhost:8081/api/v1`.
 
-| Method   | Path                          | Description                              |
-|----------|-------------------------------|------------------------------------------|
-| `POST`   | `/transactions`               | Create a new transaction                 |
-| `GET`    | `/transactions`               | List transactions with filters and pagination |
-| `DELETE` | `/transactions/{transactionId}` | Remove a transaction by ID             |
+| Method   | Path                            | Description                                   |
+|----------|---------------------------------|-----------------------------------------------|
+| `POST`   | `/transactions`                 | Create a new transaction                      |
+| `GET`    | `/transactions`                 | List transactions with filters and pagination |
+| `DELETE` | `/transactions/{transactionId}` | Remove a transaction by ID                    |
 
 All endpoints require a Bearer JWT token.
 
