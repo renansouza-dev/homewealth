@@ -1,4 +1,4 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.api;
 
 import com.renansouza.transactions.domain.TransactionEntity;
 import com.renansouza.transactions.repository.TransactionsRepository;
@@ -8,6 +8,7 @@ import static com.homewealth.transactions.api.TransactionsApi.PATH_DELETE_TRANSA
 import static com.homewealth.transactions.api.TransactionsApi.PATH_GET_TRANSACTIONS;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.JsonConfig.jsonConfig;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -24,6 +25,8 @@ import io.restassured.path.json.config.JsonPathConfig.NumberReturnType;
 import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.jspecify.annotations.NonNull;
@@ -37,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -92,18 +96,25 @@ class TransactionsControllerIT {
   @DisplayName("GET /api/v1/transactions")
   class GetTransactionsTests {
 
+    private static final String PATH = CONTEXT_PATH + PATH_GET_TRANSACTIONS;
+
     @Test
     void shouldGetNoTransactions() {
+      double countBefore = getHttpServerRequestsCount(HttpMethod.GET.name(), PATH, HttpStatus.OK.value());
+
       given()
           .contentType(ContentType.JSON)
           .when()
-          .get(CONTEXT_PATH + PATH_GET_TRANSACTIONS)
+          .get(PATH)
           .then()
           .statusCode(200)
           .body("content", empty())
           .body("pageable.pageNumber", equalTo(0))
           .body("pageable.pageSize", equalTo(20))
           .body("pageable.totalElements", equalTo(0));
+
+      double countAfter = getHttpServerRequestsCount(HttpMethod.GET.name(), PATH, HttpStatus.OK.value());
+      assertThat(countAfter).isEqualTo(countBefore + 1.0);
     }
 
     @Test
@@ -117,7 +128,7 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .get(CONTEXT_PATH + PATH_GET_TRANSACTIONS)
+          .get(PATH)
           .then()
           .statusCode(200)
           .body("content", hasSize(1))
@@ -143,7 +154,7 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .post(getEndpoint)
+          .post(PATH)
           .then()
           .statusCode(400)
           .body("timestamp", notNullValue())
@@ -154,13 +165,12 @@ class TransactionsControllerIT {
 
     @Test
     void shouldReturn405ForUnsupportedMethods() {
-      final String getEndpoint = CONTEXT_PATH + PATH_GET_TRANSACTIONS;
       String errorMessage = "Request method '%s' is not supported";
 
       given()
           .contentType(ContentType.JSON)
           .when()
-          .delete(getEndpoint)
+          .delete(PATH)
           .then().statusCode(405)
           .body("timestamp", notNullValue())
           .body("details", equalTo(errorMessage.formatted("DELETE")));
@@ -168,7 +178,7 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .put(getEndpoint)
+          .put(PATH)
           .then()
           .statusCode(405)
           .body("timestamp", notNullValue())
@@ -177,30 +187,37 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .patch(getEndpoint)
+          .patch(PATH)
           .then()
           .statusCode(405)
           .body("timestamp", notNullValue())
           .body("details", equalTo(errorMessage.formatted("PATCH")));
     }
+
   }
 
   @Nested
   @DisplayName("DELETE /api/v1/transactions/{transactionId}")
   class DeleteTransactionsTests {
 
+    private static final String PATH = CONTEXT_PATH + PATH_DELETE_TRANSACTIONS;
+
     @Test
     void shouldDeleteTransactions() {
       TransactionEntity entity = getTransactionEntity();
       UUID id = repository.save(entity).getId();
 
+      double countBefore = getHttpServerRequestsCount(HttpMethod.DELETE.name(), PATH, HttpStatus.NO_CONTENT.value());
+
       given()
           .contentType(ContentType.JSON)
           .when()
-          .delete(CONTEXT_PATH + PATH_DELETE_TRANSACTIONS, id)
+          .delete(PATH, id)
           .then()
           .statusCode(204);
 
+      double countAfter = getHttpServerRequestsCount(HttpMethod.DELETE.name(), PATH, HttpStatus.NO_CONTENT.value());
+      assertThat(countAfter).isEqualTo(countBefore + 1.0);
     }
 
     @Test
@@ -211,14 +228,14 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .delete(CONTEXT_PATH + PATH_DELETE_TRANSACTIONS, id)
+          .delete(PATH, id)
           .then()
           .statusCode(204);
 
       given()
           .contentType(ContentType.JSON)
           .when()
-          .delete(CONTEXT_PATH + PATH_DELETE_TRANSACTIONS, id)
+          .delete(PATH, id)
           .then()
           .statusCode(404)
           .body("timestamp", notNullValue())
@@ -253,7 +270,7 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .delete(CONTEXT_PATH + PATH_DELETE_TRANSACTIONS, id)
+          .delete(PATH, id)
           .then()
           .statusCode(204);
 
@@ -274,7 +291,7 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .delete(CONTEXT_PATH + PATH_DELETE_TRANSACTIONS, id)
+          .delete(PATH, id)
           .then()
           .statusCode(404)
           .body("timestamp", notNullValue())
@@ -288,7 +305,7 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .delete(CONTEXT_PATH + PATH_DELETE_TRANSACTIONS, id)
+          .delete(PATH, id)
           .then()
           .statusCode(400)
           .body("timestamp", notNullValue())
@@ -302,7 +319,7 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .delete(CONTEXT_PATH + PATH_DELETE_TRANSACTIONS, id)
+          .delete(PATH, id)
           .then()
           .statusCode(400)
           .body("timestamp", notNullValue())
@@ -312,13 +329,12 @@ class TransactionsControllerIT {
     @Test
     void shouldNotDeleteTransactions_unsupportedMethod() {
       final UUID id = UUID.randomUUID();
-      final String deleteEndpoint = CONTEXT_PATH + PATH_DELETE_TRANSACTIONS;
       String errorMessage = "Request method '%s' is not supported";
 
       given()
           .contentType(ContentType.JSON)
           .when()
-          .get(deleteEndpoint, id)
+          .get(PATH, id)
           .then().statusCode(405)
           .body("timestamp", notNullValue())
           .body("details", equalTo(errorMessage.formatted("GET")));
@@ -326,7 +342,7 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .put(deleteEndpoint, id)
+          .put(PATH, id)
           .then()
           .statusCode(405)
           .body("timestamp", notNullValue())
@@ -335,7 +351,7 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .post(deleteEndpoint, id)
+          .post(PATH, id)
           .then()
           .statusCode(405)
           .body("timestamp", notNullValue())
@@ -344,12 +360,13 @@ class TransactionsControllerIT {
       given()
           .contentType(ContentType.JSON)
           .when()
-          .patch(deleteEndpoint, id)
+          .patch(PATH, id)
           .then()
           .statusCode(405)
           .body("timestamp", notNullValue())
           .body("details", equalTo(errorMessage.formatted("PATCH")));
     }
+
   }
 
   @Nested
@@ -367,6 +384,8 @@ class TransactionsControllerIT {
           .multiply(BigDecimal.valueOf(transactionRequest.getQuantity()))
           .add(fees).setScale(2, RoundingMode.HALF_UP);
 
+      double countBefore = getHttpServerRequestsCount(HttpMethod.POST.name(), CREATE_ENDPOINT, HttpStatus.CREATED.value());
+
       postTransaction(transactionRequest)
           .then()
           .statusCode(201)
@@ -381,6 +400,9 @@ class TransactionsControllerIT {
           .body("unitPrice", equalTo(transactionRequest.getUnitPrice().intValue()))
           .body("fees", equalTo(fees))
           .body("netValue", equalTo(netValue));
+
+      double countAfter = getHttpServerRequestsCount(HttpMethod.POST.name(), CREATE_ENDPOINT, HttpStatus.CREATED.value());
+      assertThat(countAfter).isEqualTo(countBefore + 1.0);
     }
 
     @Test
@@ -477,6 +499,28 @@ class TransactionsControllerIT {
     entity.setFees(new BigDecimal("0.03"));
 
     return entity;
+  }
+
+  private double getHttpServerRequestsCount(String method, String uri, int status) {
+    var response = given()
+        .when()
+        .log()
+        .all()
+        .urlEncodingEnabled(false)
+        .get("/actuator/metrics/http.server.requests"
+            + "?tag=method:" + method
+            + "&tag=uri:" + URLEncoder.encode(uri, StandardCharsets.UTF_8)
+            + "&tag=status:" + status);
+
+    if (response.statusCode() == 404) {
+      return 0.0;
+    }
+
+    return response.then()
+        .statusCode(200)
+        .extract()
+        .jsonPath()
+        .getDouble("measurements.find { it.statistic == 'COUNT' }.value");
   }
 
 }

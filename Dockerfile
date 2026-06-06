@@ -53,7 +53,6 @@ RUN java -Djarmode=tools -jar app.jar extract --layers --launcher --destination 
 # -----------------------------------------------------
 # STAGE 4 — RUNTIME: Minimal Alpine + jlink JRE
 # -----------------------------------------------------
-ARG ALPINE_VERSION=3.23.4
 FROM alpine:${ALPINE_VERSION}
 
 RUN apk add --no-cache curl \

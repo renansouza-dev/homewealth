@@ -1,6 +1,4 @@
-package com.renansouza.transactions;
-
-import com.renansouza.transactions.domain.TransactionsCalculator;
+package com.renansouza.transactions.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

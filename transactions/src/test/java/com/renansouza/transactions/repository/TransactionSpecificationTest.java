@@ -1,7 +1,6 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.repository;
 
 import com.renansouza.transactions.domain.TransactionEntity;
-import com.renansouza.transactions.repository.TransactionSpecification;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,6 +18,7 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -132,7 +132,7 @@ class TransactionSpecificationTest {
 
   @Test
   void withFilters_fromDate_shouldAddGreaterThanOrEqualPredicate() {
-    LocalDate fromDate = LocalDate.of(2024, 1, 1);
+    LocalDate fromDate = LocalDate.of(2024, Month.JANUARY, 1);
 
     Specification<TransactionEntity> spec = TransactionSpecification
         .withFilters(null, null, fromDate, null, null);
@@ -146,7 +146,7 @@ class TransactionSpecificationTest {
 
   @Test
   void withFilters_toDate_shouldAddLessThanOrEqualPredicate() {
-    LocalDate toDate = LocalDate.of(2024, 12, 31);
+    LocalDate toDate = LocalDate.of(2024, Month.DECEMBER, 31);
 
     Specification<TransactionEntity> spec = TransactionSpecification
         .withFilters(null, null, null, toDate, null);
@@ -160,8 +160,8 @@ class TransactionSpecificationTest {
 
   @Test
   void withFilters_dateRange_shouldAddBothDatePredicates() {
-    LocalDate fromDate = LocalDate.of(2024, 1, 1);
-    LocalDate toDate = LocalDate.of(2024, 12, 31);
+    LocalDate fromDate = LocalDate.of(2024, Month.JANUARY, 1);
+    LocalDate toDate = LocalDate.of(2024, Month.DECEMBER, 31);
 
     Specification<TransactionEntity> spec = TransactionSpecification
         .withFilters(null, null, fromDate, toDate, null);
@@ -200,8 +200,8 @@ class TransactionSpecificationTest {
   void withFilters_allFiltersProvided_shouldAddAllPredicates() {
     String portfolioId = UUID.randomUUID().toString();
     String assetId = "ASSET-XYZ";
-    LocalDate fromDate = LocalDate.of(2024, 1, 1);
-    LocalDate toDate = LocalDate.of(2024, 6, 30);
+    LocalDate fromDate = LocalDate.of(2024, Month.JANUARY, 1);
+    LocalDate toDate = LocalDate.of(2024, Month.JUNE, 30);
 
     Specification<TransactionEntity> spec = TransactionSpecification
         .withFilters(portfolioId, assetId, fromDate, toDate, OperationType.BUY);
