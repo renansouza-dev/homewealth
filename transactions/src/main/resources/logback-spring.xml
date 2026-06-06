@@ -2,12 +2,12 @@
 <configuration>
   <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-  <appender name="OTEL"
+  <appender name="OpenTelemetry"
     class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
   </appender>
 
   <root level="INFO">
     <appender-ref ref="CONSOLE"/>
-    <appender-ref ref="OTEL"/>
+    <appender-ref ref="OpenTelemetry"/>
   </root>
 </configuration>

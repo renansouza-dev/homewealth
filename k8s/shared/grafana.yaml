@@ -39,8 +39,6 @@ spec:
             runAsUser: 472
             runAsGroup: 472
             runAsNonRoot: true
-            supplementalGroups:
-              - 0
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             capabilities:

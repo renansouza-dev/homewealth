@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 1.0
  */
 @Service
-@Transactional(readOnly = true)
 public class TransactionsServiceImpl implements TransactionsService {
 
   private static final Logger log = LoggerFactory.getLogger(TransactionsServiceImpl.class);
@@ -125,6 +124,7 @@ public class TransactionsServiceImpl implements TransactionsService {
    * @see OperationType
    */
   @Override
+  @Transactional(readOnly = true)
   public TransactionPageResponse getTransactions(String portfolioId, String assetId,
       LocalDate fromDate, LocalDate toDate, OperationType operationType, PageRequest pageRequest) {
     Specification<TransactionEntity> spec = TransactionSpecification.withFilters(

@@ -26,9 +26,15 @@
     <jackson-databind-nullable.version>0.2.8</jackson-databind-nullable.version>
     <openapi-generator-maven-plugin.version>7.18.0</openapi-generator-maven-plugin.version>
     <opentelemetry-instrumentation.version>2.21.0-alpha</opentelemetry-instrumentation.version>
+    <datasource-micrometer-spring-boot.version>2.2.1</datasource-micrometer-spring-boot.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>net.ttddyy.observation</groupId>
+      <artifactId>datasource-micrometer-spring-boot</artifactId>
+      <version>${datasource-micrometer-spring-boot.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>

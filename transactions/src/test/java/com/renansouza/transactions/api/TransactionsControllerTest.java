@@ -1,6 +1,5 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.api;
 
-import com.renansouza.transactions.api.TransactionsController;
 import com.renansouza.transactions.exception.TransactionNotFoundException;
 import com.renansouza.transactions.exception.TransactionsExceptionHandler;
 import com.renansouza.transactions.service.TransactionsService;

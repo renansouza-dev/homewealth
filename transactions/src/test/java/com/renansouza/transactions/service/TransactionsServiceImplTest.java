@@ -1,10 +1,9 @@
-package com.renansouza.transactions;
+package com.renansouza.transactions.service;
 
 import com.renansouza.transactions.domain.TransactionEntity;
 import com.renansouza.transactions.domain.TransactionsMapper;
 import com.renansouza.transactions.exception.TransactionNotFoundException;
 import com.renansouza.transactions.repository.TransactionsRepository;
-import com.renansouza.transactions.service.TransactionsServiceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -30,6 +29,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -248,7 +248,7 @@ class TransactionsServiceImplTest {
     @Test
     @DisplayName("Should handle transaction with past operation date")
     void shouldHandleTransactionWithPastDate() {
-      LocalDate pastDate = LocalDate.of(2025, 1, 1);
+      LocalDate pastDate = LocalDate.of(2025, Month.JANUARY, 1);
       validRequest.setOperationDate(pastDate);
       mappedTransaction.setOperationDate(pastDate);
       savedEntity.setOperationDate(pastDate);
@@ -569,8 +569,8 @@ class TransactionsServiceImplTest {
     void shouldPassAllFiltersToSpecification() {
       String portfolioId = UUID.randomUUID().toString();
       String assetId = "ASSET-001";
-      LocalDate fromDate = LocalDate.of(2024, 1, 1);
-      LocalDate toDate = LocalDate.of(2024, 12, 31);
+      LocalDate fromDate = LocalDate.of(2024, Month.JANUARY, 1);
+      LocalDate toDate = LocalDate.of(2024, Month.DECEMBER, 31);
       Page<TransactionEntity> page = new PageImpl<>(List.of(new TransactionEntity()));
 
       when(repository.findAll(ArgumentMatchers.<Specification<TransactionEntity>>any(), eq(pageRequest))).thenReturn(page);

@@ -1,1 +1,541 @@
-openapi: 3.0.3info:  description: microservice to manage investment transaction  title: HomeWealth Transaction Service API  version: 1.0.0servers:- description: development server  url: http://localhost:8081/api/v1paths:  /transactions:    get:      operationId: getTransactions      parameters:      - explode: true        in: query        name: portfolioId        required: false        schema:          type: string        style: form      - explode: true        in: query        name: assetId        required: false        schema:          type: string        style: form      - explode: true        in: query        name: fromDate        required: false        schema:          format: date          type: string        style: form      - explode: true        in: query        name: toDate        required: false        schema:          format: date          type: string        style: form      - explode: true        in: query        name: operationType        required: false        schema:          $ref: "#/components/schemas/operation-type"        style: form      - explode: true        in: query        name: page        required: false        schema:          default: 0          type: integer        style: form      - explode: true        in: query        name: size        required: false        schema:          default: 20          type: integer        style: form      - description: Property to sort by        explode: true        in: query        name: sortBy        required: false        schema:          default: operationDate          enum:          - id          - brokerId          - portfolioId          - assetId          - operationDate          - operationType          - quantity          - unitPrice          - grossValue          - fees          - netValue          type: string        style: form      - description: Sort order direction        explode: true        in: query        name: sortOrder        required: false        schema:          default: desc          enum:          - asc          - desc          type: string        style: form      responses:        "200":          content:            application/json:              schema:                $ref: "#/components/schemas/transaction-page-response"          description: List of transactions        "400":          content:            application/json:              example:                details: invalid input parameters                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: invalid request        "401":          content:            application/json:              example:                details: invalid token or expired                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: unauthorized request        "403":          content:            application/json:              example:                details: you don't have permission to delete this transaction                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: forbidden        "405":          content:            application/json:              example:                details: method is not allowed for this resource                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: not found        "500":          content:            application/json:              example:                details: an unexpected error occurred.                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: internal server error      security:      - bearerAuth: []      summary: List transactions from a given portfolioId      tags:      - Transactions    post:      operationId: createTransactions      requestBody:        content:          application/json:            schema:              $ref: "#/components/schemas/transaction-request"        required: true      responses:        "201":          content:            application/json:              schema:                $ref: "#/components/schemas/transaction-response"          description: Transaction created successfully        "400":          content:            application/json:              example:                details: invalid input parameters                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: invalid request        "401":          content:            application/json:              example:                details: invalid token or expired                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: unauthorized request        "403":          content:            application/json:              example:                details: you don't have permission to delete this transaction                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: forbidden        "405":          content:            application/json:              example:                details: method is not allowed for this resource                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: not found        "500":          content:            application/json:              example:                details: an unexpected error occurred.                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: internal server error      security:      - bearerAuth: []      summary: Create a new transaction      tags:      - Transactions  /transactions/{transactionId}:    delete:      operationId: deleteTransactions      parameters:      - explode: false        in: path        name: transactionId        required: true        schema:          format: uuid          type: string        style: simple      responses:        "204":          description: Transaction deleted        "400":          content:            application/json:              example:                details: invalid input parameters                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: invalid request        "401":          content:            application/json:              example:                details: invalid token or expired                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: unauthorized request        "403":          content:            application/json:              example:                details: you don't have permission to delete this transaction                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: forbidden        "404":          content:            application/json:              example:                details: resource not found                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: not found        "405":          content:            application/json:              example:                details: method is not allowed for this resource                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: not found        "500":          content:            application/json:              example:                details: an unexpected error occurred.                timestamp: 2026-01-01T00:00:00.000000              schema:                $ref: "#/components/schemas/error-response"          description: internal server error      security:      - bearerAuth: []      summary: Remove one transaction from the given id      tags:      - Transactionscomponents:  responses:    "400":      content:        application/json:          example:            details: invalid input parameters            timestamp: 2026-01-01T00:00:00.000000          schema:            $ref: "#/components/schemas/error-response"      description: invalid request    "401":      content:        application/json:          example:            details: invalid token or expired            timestamp: 2026-01-01T00:00:00.000000          schema:            $ref: "#/components/schemas/error-response"      description: unauthorized request    "403":      content:        application/json:          example:            details: you don't have permission to delete this transaction            timestamp: 2026-01-01T00:00:00.000000          schema:            $ref: "#/components/schemas/error-response"      description: forbidden    "405":      content:        application/json:          example:            details: method is not allowed for this resource            timestamp: 2026-01-01T00:00:00.000000          schema:            $ref: "#/components/schemas/error-response"      description: not found    "500":      content:        application/json:          example:            details: an unexpected error occurred.            timestamp: 2026-01-01T00:00:00.000000          schema:            $ref: "#/components/schemas/error-response"      description: internal server error    "404":      content:        application/json:          example:            details: resource not found            timestamp: 2026-01-01T00:00:00.000000          schema:            $ref: "#/components/schemas/error-response"      description: not found  schemas:    operation-type:      description: Type of transaction operation      enum:      - BUY      - SELL      type: string    transaction-page-response:      example:        pageable:          pageNumber: 0          pageSize: 20          totalElements: 150        content:        - unitPrice: 27.35          operationDate: 2026-01-01          brokerId: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e          fees: 10.0          portfolioId: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d          quantity: 100          assetId: ITUB4          netValue: -2745.0          operationType: BUY          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91        - unitPrice: 27.35          operationDate: 2026-01-01          brokerId: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e          fees: 10.0          portfolioId: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d          quantity: 100          assetId: ITUB4          netValue: -2745.0          operationType: BUY          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91      properties:        content:          description: List of transactions          items:            $ref: "#/components/schemas/transaction-response"          type: array        pageable:          $ref: "#/components/schemas/transaction_page_response_pageable"      type: object    error-response:      example:        details: details        timestamp: 2000-01-23T04:56:07.000+00:00      properties:        details:          description: Detailed error information          type: string        timestamp:          description: Error timestamp          format: date-time          type: string      required:      - details      - timestamp      type: object    transaction-request:      properties:        brokerId:          description: Broker identifier          example: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e          format: uuid          type: string        portfolioId:          description: Portfolio identifier          example: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d          format: uuid          type: string        assetId:          description: Asset identifier          example: ASSE4          maxLength: 6          minLength: 5          type: string        operationDate:          description: Date and time of the operation          example: 2026-01-18          format: date          type: string        operationType:          $ref: "#/components/schemas/operation-type"        quantity:          description: Quantity of assets          example: 100          format: int32          minimum: 1          type: integer        unitPrice:          description: Price per unit          example: 27.35          format: double          minimum: 0          type: number      required:      - assetId      - brokerId      - operationDate      - operationType      - portfolioId      - quantity      - unitPrice      type: object    transaction-response:      example:        unitPrice: 27.35        operationDate: 2026-01-01        brokerId: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e        fees: 10.0        portfolioId: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d        quantity: 100        assetId: ITUB4        netValue: -2745.0        operationType: BUY        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91      properties:        id:          description: Transaction identifier          format: uuid          type: string        brokerId:          description: Broker identifier          example: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e          format: uuid          type: string        portfolioId:          description: Portfolio identifier          example: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d          format: uuid          type: string        assetId:          description: Asset identifier          example: ITUB4          type: string        operationDate:          description: Date and time of the operation          example: 2026-01-01          format: date          type: string        operationType:          $ref: "#/components/schemas/operation-type"        quantity:          description: Quantity of assets          example: 100          format: double          type: number        unitPrice:          description: Price per unit          example: 27.35          format: double          type: number        fees:          description: Transaction fees          example: 10.0          format: double          type: number        netValue:          description: Net value after fees          example: -2745.0          format: double          type: number      type: object    transaction_page_response_pageable:      description: Pagination information      example:        pageNumber: 0        pageSize: 20        totalElements: 150      properties:        pageNumber:          description: Current page number          example: 0          type: integer        pageSize:          description: Number of items per page          example: 20          type: integer        totalElements:          description: Total number of elements          example: 150          format: int64          type: integer      type: object  securitySchemes:    bearerAuth:      bearerFormat: JWT      scheme: bearer      type: http
+openapi: 3.0.3
+info:
+  description: microservice to manage investment transaction
+  title: HomeWealth Transaction Service API
+  version: 1.0.0
+servers:
+- description: development server
+  url: http://localhost:8081/api/v1
+paths:
+  /transactions:
+    get:
+      operationId: getTransactions
+      parameters:
+      - explode: true
+        in: query
+        name: portfolioId
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: assetId
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: fromDate
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: toDate
+        required: false
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: operationType
+        required: false
+        schema:
+          $ref: "#/components/schemas/operation-type"
+        style: form
+      - explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          type: integer
+        style: form
+      - description: Property to sort by
+        explode: true
+        in: query
+        name: sortBy
+        required: false
+        schema:
+          default: operationDate
+          enum:
+          - id
+          - brokerId
+          - portfolioId
+          - assetId
+          - operationDate
+          - operationType
+          - quantity
+          - unitPrice
+          - grossValue
+          - fees
+          - netValue
+          type: string
+        style: form
+      - description: Sort order direction
+        explode: true
+        in: query
+        name: sortOrder
+        required: false
+        schema:
+          default: desc
+          enum:
+          - asc
+          - desc
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transaction-page-response"
+          description: List of transactions
+        "400":
+          content:
+            application/json:
+              example:
+                details: invalid input parameters
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: invalid request
+        "401":
+          content:
+            application/json:
+              example:
+                details: invalid token or expired
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: unauthorized request
+        "403":
+          content:
+            application/json:
+              example:
+                details: you don't have permission to delete this transaction
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: forbidden
+        "405":
+          content:
+            application/json:
+              example:
+                details: method is not allowed for this resource
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: not found
+        "500":
+          content:
+            application/json:
+              example:
+                details: an unexpected error occurred.
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: internal server error
+      security:
+      - bearerAuth: []
+      summary: List transactions from a given portfolioId
+      tags:
+      - Transactions
+    post:
+      operationId: createTransactions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transaction-request"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transaction-response"
+          description: Transaction created successfully
+        "400":
+          content:
+            application/json:
+              example:
+                details: invalid input parameters
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: invalid request
+        "401":
+          content:
+            application/json:
+              example:
+                details: invalid token or expired
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: unauthorized request
+        "403":
+          content:
+            application/json:
+              example:
+                details: you don't have permission to delete this transaction
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: forbidden
+        "405":
+          content:
+            application/json:
+              example:
+                details: method is not allowed for this resource
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: not found
+        "500":
+          content:
+            application/json:
+              example:
+                details: an unexpected error occurred.
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: internal server error
+      security:
+      - bearerAuth: []
+      summary: Create a new transaction
+      tags:
+      - Transactions
+  /transactions/{transactionId}:
+    delete:
+      operationId: deleteTransactions
+      parameters:
+      - explode: false
+        in: path
+        name: transactionId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Transaction deleted
+        "400":
+          content:
+            application/json:
+              example:
+                details: invalid input parameters
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: invalid request
+        "401":
+          content:
+            application/json:
+              example:
+                details: invalid token or expired
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: unauthorized request
+        "403":
+          content:
+            application/json:
+              example:
+                details: you don't have permission to delete this transaction
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: forbidden
+        "404":
+          content:
+            application/json:
+              example:
+                details: resource not found
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: not found
+        "405":
+          content:
+            application/json:
+              example:
+                details: method is not allowed for this resource
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: not found
+        "500":
+          content:
+            application/json:
+              example:
+                details: an unexpected error occurred.
+                timestamp: 2026-01-01T00:00:00.000000
+              schema:
+                $ref: "#/components/schemas/error-response"
+          description: internal server error
+      security:
+      - bearerAuth: []
+      summary: Remove one transaction from the given id
+      tags:
+      - Transactions
+components:
+  responses:
+    "400":
+      content:
+        application/json:
+          example:
+            details: invalid input parameters
+            timestamp: 2026-01-01T00:00:00.000000
+          schema:
+            $ref: "#/components/schemas/error-response"
+      description: invalid request
+    "401":
+      content:
+        application/json:
+          example:
+            details: invalid token or expired
+            timestamp: 2026-01-01T00:00:00.000000
+          schema:
+            $ref: "#/components/schemas/error-response"
+      description: unauthorized request
+    "403":
+      content:
+        application/json:
+          example:
+            details: you don't have permission to delete this transaction
+            timestamp: 2026-01-01T00:00:00.000000
+          schema:
+            $ref: "#/components/schemas/error-response"
+      description: forbidden
+    "405":
+      content:
+        application/json:
+          example:
+            details: method is not allowed for this resource
+            timestamp: 2026-01-01T00:00:00.000000
+          schema:
+            $ref: "#/components/schemas/error-response"
+      description: not found
+    "500":
+      content:
+        application/json:
+          example:
+            details: an unexpected error occurred.
+            timestamp: 2026-01-01T00:00:00.000000
+          schema:
+            $ref: "#/components/schemas/error-response"
+      description: internal server error
+    "404":
+      content:
+        application/json:
+          example:
+            details: resource not found
+            timestamp: 2026-01-01T00:00:00.000000
+          schema:
+            $ref: "#/components/schemas/error-response"
+      description: not found
+  schemas:
+    operation-type:
+      description: Type of transaction operation
+      enum:
+      - BUY
+      - SELL
+      type: string
+    transaction-page-response:
+      example:
+        pageable:
+          pageNumber: 0
+          pageSize: 20
+          totalElements: 150
+        content:
+        - unitPrice: 27.35
+          operationDate: 2026-01-01
+          brokerId: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e
+          fees: 10.0
+          portfolioId: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d
+          quantity: 100
+          assetId: ITUB4
+          netValue: -2745.0
+          operationType: BUY
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        - unitPrice: 27.35
+          operationDate: 2026-01-01
+          brokerId: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e
+          fees: 10.0
+          portfolioId: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d
+          quantity: 100
+          assetId: ITUB4
+          netValue: -2745.0
+          operationType: BUY
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        content:
+          description: List of transactions
+          items:
+            $ref: "#/components/schemas/transaction-response"
+          type: array
+        pageable:
+          $ref: "#/components/schemas/transaction_page_response_pageable"
+      type: object
+    error-response:
+      example:
+        details: details
+        timestamp: 2000-01-23T04:56:07.000+00:00
+      properties:
+        details:
+          description: Detailed error information
+          type: string
+        timestamp:
+          description: Error timestamp
+          format: date-time
+          type: string
+      required:
+      - details
+      - timestamp
+      type: object
+    transaction-request:
+      properties:
+        brokerId:
+          description: Broker identifier
+          example: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e
+          format: uuid
+          type: string
+        portfolioId:
+          description: Portfolio identifier
+          example: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d
+          format: uuid
+          type: string
+        assetId:
+          description: Asset identifier
+          example: ASSE4
+          maxLength: 6
+          minLength: 5
+          type: string
+        operationDate:
+          description: Date and time of the operation
+          example: 2026-01-18
+          format: date
+          type: string
+        operationType:
+          $ref: "#/components/schemas/operation-type"
+        quantity:
+          description: Quantity of assets
+          example: 100
+          format: int32
+          minimum: 1
+          type: integer
+        unitPrice:
+          description: Price per unit
+          example: 27.35
+          format: double
+          minimum: 0
+          type: number
+      required:
+      - assetId
+      - brokerId
+      - operationDate
+      - operationType
+      - portfolioId
+      - quantity
+      - unitPrice
+      type: object
+    transaction-response:
+      example:
+        unitPrice: 27.35
+        operationDate: 2026-01-01
+        brokerId: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e
+        fees: 10.0
+        portfolioId: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d
+        quantity: 100
+        assetId: ITUB4
+        netValue: -2745.0
+        operationType: BUY
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          description: Transaction identifier
+          format: uuid
+          type: string
+        brokerId:
+          description: Broker identifier
+          example: 20db4dc0-c0ff-4c0e-b2ab-fa770487d28e
+          format: uuid
+          type: string
+        portfolioId:
+          description: Portfolio identifier
+          example: c5fbe7bf-1c29-4d56-8496-9ee6a33d597d
+          format: uuid
+          type: string
+        assetId:
+          description: Asset identifier
+          example: ITUB4
+          type: string
+        operationDate:
+          description: Date and time of the operation
+          example: 2026-01-01
+          format: date
+          type: string
+        operationType:
+          $ref: "#/components/schemas/operation-type"
+        quantity:
+          description: Quantity of assets
+          example: 100
+          format: double
+          type: number
+        unitPrice:
+          description: Price per unit
+          example: 27.35
+          format: double
+          type: number
+        fees:
+          description: Transaction fees
+          example: 10.0
+          format: double
+          type: number
+        netValue:
+          description: Net value after fees
+          example: -2745.0
+          format: double
+          type: number
+      type: object
+    transaction_page_response_pageable:
+      description: Pagination information
+      example:
+        pageNumber: 0
+        pageSize: 20
+        totalElements: 150
+      properties:
+        pageNumber:
+          description: Current page number
+          example: 0
+          type: integer
+        pageSize:
+          description: Number of items per page
+          example: 20
+          type: integer
+        totalElements:
+          description: Total number of elements
+          example: 150
+          format: int64
+          type: integer
+      type: object
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
