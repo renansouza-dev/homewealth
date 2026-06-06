@@ -504,8 +504,6 @@ class TransactionsControllerIT {
   private double getHttpServerRequestsCount(String method, String uri, int status) {
     var response = given()
         .when()
-        .log()
-        .all()
         .urlEncodingEnabled(false)
         .get("/actuator/metrics/http.server.requests"
             + "?tag=method:" + method
