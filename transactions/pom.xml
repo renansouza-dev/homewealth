@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>transactions</artifactId>
-  <version>1.0.0</version>
+  <version>0.0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <properties>
